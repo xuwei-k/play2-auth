@@ -10,7 +10,7 @@ class IntegrationSpec extends Specification {
   
   "Application" should {
     
-    "work from within a browser" in new WithBrowser(port = 3333, webDriver = HTMLUNIT, app = FakeApplication(path = new File("sample"))) {
+    "work from within a browser" in new WithBrowser(webDriver = HTMLUNIT, app = FakeApplication(path = new File("sample")), port = 3333) {
 
       // login failed
       browser.goTo("http://localhost:3333/")
@@ -36,7 +36,7 @@ class IntegrationSpec extends Specification {
 
     }
 
-    "authorize" in new WithBrowser(port = 3333, webDriver = HTMLUNIT, app = FakeApplication(path = new File("sample"))) {
+    "authorize" in new WithBrowser(webDriver = HTMLUNIT, app = FakeApplication(path = new File("sample")), port = 3333) {
 
       // login succeded
       browser.goTo("http://localhost:3333/")
