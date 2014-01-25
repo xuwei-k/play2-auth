@@ -54,6 +54,8 @@ trait AsyncAuth {
         }
       case None =>
         authenticationFailed(request).map(Left.apply)
+    }.recoverWith{
+      case _ => authorizationFailed(request).map(Left.apply)
     }
   }
 
