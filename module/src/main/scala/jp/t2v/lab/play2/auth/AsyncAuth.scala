@@ -44,17 +44,16 @@ trait AsyncAuth {
   }
 
   def authorized(authority: Authority)(implicit request: RequestHeader, context: ExecutionContext): Future[Either[SimpleResult, User]] = {
-    restoreUser collect {
-      case Some(user) => Right(user)
-    } recoverWith {
-      case _ => authenticationFailed(request).map(Left.apply)
-    } flatMap {
-      case Right(user)  => authorize(user, authority) collect {
-        case true => Right(user)
-      } recoverWith {
-        case _ => authorizationFailed(request).map(Left.apply)
-      }
-      case Left(result) => Future.successful(Left(result))
+    restoreUser.flatMap{
+      case Some(user) =>
+        authorize(user, authority).flatMap{
+          case true  =>
+            Future.successful(Right(user))
+          case false =>
+            authorizationFailed(request).map(Left.apply)
+        }
+      case None =>
+        authenticationFailed(request).map(Left.apply)
     }
   }
 
